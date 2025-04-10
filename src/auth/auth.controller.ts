@@ -1,5 +1,6 @@
-import { signup } from "./auth.service";
+import { signup, login } from "./auth.service";
 import { Request, Response } from "express";
+import { sanitizeUser } from "../helpers/SanitizeUser";
 
 
 interface SignupRequestBody {
@@ -15,10 +16,10 @@ interface User {
     email?: string;
 }
 
-export const register = async function register(req: Request<{}, {}, SignupRequestBody>, res: Response) {
+export const register = async (req: Request<{}, {}, SignupRequestBody>, res: Response) => {
     try {
         const user = await signup(req.body);
-        res.status(201).json(user);
+        res.status(201).json(sanitizeUser(user));
     } catch (error) {
         const status = (error as any)?.status || 500;
         const message = (error as any)?.message || "Internal server error";
@@ -26,9 +27,10 @@ export const register = async function register(req: Request<{}, {}, SignupReque
     }
 }
 
-export const login = async function login(req: Request<{}, {}, { email: string; password: string }>, res: Response) {
+export const signin = async (req: Request<{}, {}, { email: string; password: string }>, res: Response) => {
     try {
-
+        const user = await login( req.body.email, req.body.password );
+        res.status(200).json(sanitizeUser(user));
     } catch (error) {
         const status = (error as any)?.status || 500;
         const message = (error as any)?.message || "Internal server error";

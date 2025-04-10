@@ -3,6 +3,7 @@ import { usersTable } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { BadRequestException } from "../exceptions/BadRequestException";
+import { NotFoundException } from "../exceptions/NotFoundException";
 
 type UserSignUp = {
     name: string;
@@ -13,7 +14,6 @@ type UserSignUp = {
 
 export const signup = async (userSignup: UserSignUp) => {
     const { name, age, email, password } = userSignup;
-    console.log(email);
   
     const user = await db
       .select()
@@ -30,8 +30,26 @@ export const signup = async (userSignup: UserSignUp) => {
     const newUser = await db
       .insert(usersTable)
       .values(userSignup).returning();
-      console.log("Inserted user:", newUser);
   
     return newUser[0];
-  };
+};
+
+export const login = async (email: string, password: string) => {
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+  
+    if (user.length === 0) {
+      throw new NotFoundException("User not found");
+    }
+  
+    const isPasswordValid = await bcrypt.compare(password, user[0].password);
+  
+    if (!isPasswordValid) {
+      throw new BadRequestException("Invalid password");
+    }
+  
+    return user[0];
+}
   
