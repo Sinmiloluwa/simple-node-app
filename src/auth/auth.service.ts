@@ -4,6 +4,8 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { BadRequestException } from "../exceptions/BadRequestException";
 import { NotFoundException } from "../exceptions/NotFoundException";
+import jwt from "jsonwebtoken";
+import 'dotenv/config';
 
 type UserSignUp = {
     name: string;
@@ -49,7 +51,18 @@ export const login = async (email: string, password: string) => {
     if (!isPasswordValid) {
       throw new BadRequestException("Invalid password");
     }
+
+    const token = jwt.sign(
+      { id: user[0].id, email: user[0].email },
+        process.env.JWT_CONSTANT as string,
+        { expiresIn: "1h" },    
+    );
+
+    const userWithToken = {
+        ...user[0],
+        token,
+    };
   
-    return user[0];
+    return userWithToken;
 }
   

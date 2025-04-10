@@ -19,6 +19,8 @@ const drizzle_orm_1 = require("drizzle-orm");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const BadRequestException_1 = require("../exceptions/BadRequestException");
 const NotFoundException_1 = require("../exceptions/NotFoundException");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+require("dotenv/config");
 const signup = (userSignup) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, age, email, password } = userSignup;
     const user = yield db_1.db
@@ -48,6 +50,8 @@ const login = (email, password) => __awaiter(void 0, void 0, void 0, function* (
     if (!isPasswordValid) {
         throw new BadRequestException_1.BadRequestException("Invalid password");
     }
-    return user[0];
+    const token = jsonwebtoken_1.default.sign({ id: user[0].id, email: user[0].email }, process.env.JWT_CONSTANT, { expiresIn: "1h" });
+    const userWithToken = Object.assign(Object.assign({}, user[0]), { token });
+    return userWithToken;
 });
 exports.login = login;
