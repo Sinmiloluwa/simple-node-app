@@ -16,7 +16,7 @@ exports.login = exports.signup = void 0;
 const db_1 = require("../db");
 const schema_1 = require("../db/schema");
 const drizzle_orm_1 = require("drizzle-orm");
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const BadRequestException_1 = require("../exceptions/BadRequestException");
 const NotFoundException_1 = require("../exceptions/NotFoundException");
 const signup = (userSignup) => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,7 +28,7 @@ const signup = (userSignup) => __awaiter(void 0, void 0, void 0, function* () {
     if (user.length > 0) {
         throw new BadRequestException_1.BadRequestException("User already exists");
     }
-    const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+    const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
     userSignup.password = hashedPassword;
     const newUser = yield db_1.db
         .insert(schema_1.usersTable)
@@ -44,7 +44,7 @@ const login = (email, password) => __awaiter(void 0, void 0, void 0, function* (
     if (user.length === 0) {
         throw new NotFoundException_1.NotFoundException("User not found");
     }
-    const isPasswordValid = yield bcrypt_1.default.compare(password, user[0].password);
+    const isPasswordValid = yield bcryptjs_1.default.compare(password, user[0].password);
     if (!isPasswordValid) {
         throw new BadRequestException_1.BadRequestException("Invalid password");
     }

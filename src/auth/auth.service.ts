@@ -1,7 +1,7 @@
 import { db } from "../db";
 import { usersTable } from "../db/schema";
 import { eq } from "drizzle-orm";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { BadRequestException } from "../exceptions/BadRequestException";
 import { NotFoundException } from "../exceptions/NotFoundException";
 
