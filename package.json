@@ -1,0 +1,31 @@
+{
+  "name": "nodedrizzle",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/app.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.41.0",
+    "express": "^5.1.0",
+    "pg": "^8.14.1",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.0",
+    "drizzle-kit": "^0.30.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
