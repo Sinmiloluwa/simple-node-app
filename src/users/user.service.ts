@@ -1,17 +1,18 @@
-// import { db } from "../db";
-// import { usersTable } from "../db/schema";
-// import { eq } from "drizzle-orm";
+import { db } from "../db";
+import { usersTable } from "../db/schema";
+import { eq } from "drizzle-orm";
 
-// export const updateName = async (userId, newName) => {
-//   const user = await db
-//     .update(usersTable)
-//     .set({ name: newName })
-//     .where(eq(usersTable.id, userId))
-//     .returning();
+export const updateName = async (userId: number, newName: string) => {
 
-//   if (user.length === 0) {
-//     throw new Error("User not found");
-//   }
+  const user = await db
+    .update(usersTable)
+    .set({ name: newName })
+    .where(eq(usersTable.id, userId))
+    .returning();
 
-//   return user[0];
-// }
+  if (user.length === 0) {
+    throw new Error("User not found");
+  }
+
+  return user[0];
+}

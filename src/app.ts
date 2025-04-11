@@ -1,5 +1,6 @@
 import express from 'express';
 import authRoutes from './auth/auth.route';
+import userRoutes from './users/user.route';
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(authRoutes);
+app.use('/api', userRoutes);
 
 app.listen(3000, () => {
     console.log(`Server is running on port ${PORT}`);
