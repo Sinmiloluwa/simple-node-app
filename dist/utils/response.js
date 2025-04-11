@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorResponse = exports.successResponse = exports.createdResponse = void 0;
+exports.validationError = exports.errorResponse = exports.successResponse = exports.createdResponse = void 0;
 const createdResponse = (message, data = null) => {
     return (0, exports.successResponse)(message, data);
 };
@@ -23,3 +23,11 @@ const errorResponse = (message, data = null) => {
     };
 };
 exports.errorResponse = errorResponse;
+const validationError = (message, errors = null) => {
+    return {
+        status: false,
+        message,
+        errors
+    };
+};
+exports.validationError = validationError;

@@ -13,10 +13,15 @@ exports.signin = exports.register = void 0;
 const auth_service_1 = require("./auth.service");
 const SanitizeUser_1 = require("../helpers/SanitizeUser");
 const response_1 = require("../utils/response");
+const auth_schema_1 = require("./validation/auth.schema");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = auth_schema_1.CreateUserSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(422).json((0, response_1.validationError)("Validation failed", result.error.flatten().fieldErrors));
+    }
     try {
         const user = yield (0, auth_service_1.signup)(req.body);
-        res.status(201).json((0, response_1.successResponse)("User created successfully"));
+        return res.status(201).json((0, response_1.successResponse)("User created successfully"));
     }
     catch (error) {
         const status = (error === null || error === void 0 ? void 0 : error.status) || 500;
@@ -26,6 +31,10 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = auth_schema_1.LoginUserSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(422).json((0, response_1.validationError)("Validation failed", result.error.flatten().fieldErrors));
+    }
     try {
         const user = yield (0, auth_service_1.login)(req.body.email, req.body.password);
         return res.status(201).json((0, response_1.createdResponse)("Successful login", (0, SanitizeUser_1.sanitizeUser)(user)));

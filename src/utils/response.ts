@@ -20,3 +20,11 @@ export const errorResponse = (message: string, data: any = null) => {
         message,
     };
 }
+
+export const validationError = (message: string, errors: any = null) => {  
+    return {
+        status: false,
+        message,
+        errors
+    };
+}

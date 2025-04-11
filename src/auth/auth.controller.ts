@@ -1,7 +1,8 @@
 import { signup, login } from "./auth.service";
 import { Request, Response } from "express";
 import { sanitizeUser } from "../helpers/SanitizeUser";
-import { createdResponse, errorResponse, successResponse } from "../utils/response";
+import { createdResponse, errorResponse, successResponse, validationError } from "../utils/response";
+import { CreateUserSchema, LoginUserSchema } from "./validation/auth.schema";
 
 
 interface SignupRequestBody {
@@ -17,10 +18,16 @@ interface User {
     email?: string;
 }
 
-export const register = async (req: Request<{}, {}, SignupRequestBody>, res: Response) => {
+export const register = async (req: Request<{}, {}, SignupRequestBody>, res: any) => {
+    const result = CreateUserSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(422).json(validationError("Validation failed", result.error.flatten().fieldErrors));
+      }
+
     try {
         const user = await signup(req.body);
-        res.status(201).json(successResponse("User created successfully"));
+        return res.status(201).json(successResponse("User created successfully"));
     } catch (error) {
         const status = (error as any)?.status || 500;
         const message = (error as any)?.message || "Internal server error";
@@ -29,6 +36,12 @@ export const register = async (req: Request<{}, {}, SignupRequestBody>, res: Res
 }
 
 export const signin = async (req: Request<{}, {}, { email: string; password: string }>, res: any) => {
+    const result = LoginUserSchema.safeParse(req.body);
+
+    if (!result.success) {
+        return res.status(422).json(validationError("Validation failed", result.error.flatten().fieldErrors));
+      }
+
     try {
         const user = await login( req.body.email, req.body.password );
         return res.status(201).json(createdResponse("Successful login", sanitizeUser(user)));
