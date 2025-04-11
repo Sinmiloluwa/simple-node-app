@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { errorResponse, successResponse } from "../utils/response";
-import { updateName } from "./user.service";
-import { verifyUser } from "../guards/auth.guard";
+import { updateName, sendForgotPassword } from "./user.service";
 
 export const updateUsername = async (req: any, res: Response): Promise<void> => {
     try {
@@ -16,7 +15,7 @@ export const updateUsername = async (req: any, res: Response): Promise<void> => 
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Implement your logic here
+        await sendForgotPassword(req.body.email);
         res.status(200).json(successResponse("Password reset link sent to your email"));
     } catch (error) {
         const status = (error as any)?.status || 500;
