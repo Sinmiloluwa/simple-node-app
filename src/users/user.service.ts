@@ -4,6 +4,7 @@ import { usersTable, tokensTable } from "../db/schema";
 import { eq } from "drizzle-orm";
 import * as mailer from "nodemailer";
 import { BadRequestException } from "../exceptions/BadRequestException";
+import bcrypt from "bcryptjs";
 
 export const updateName = async (userId: number, newName: string) => {
 
@@ -31,6 +32,7 @@ export const sendForgotPassword = async (email: string) => {
   }
 
     const token = Math.random().toString(20).substring(2, 15);
+
     await db.insert(tokensTable).values({
         userId: user[0].id,
         token: token,
@@ -38,8 +40,46 @@ export const sendForgotPassword = async (email: string) => {
         expiresAt: Math.floor(Date.now() / 1000) + 3600,
     });
 
-    sendEmail(email, user[0].password);
+    sendEmail(email, token);
 }
+
+export const changePassword = async (token: string, newPassword: string) => {
+
+    const tokenData = await db
+        .select()
+        .from(tokensTable)
+        .where(eq(tokensTable.token, token));
+
+    if (tokenData.length === 0) {
+        throw new BadRequestException("Token not found");
+    }
+    if (tokenData[0].expiresAt < Math.floor(Date.now() / 1000)) {
+        throw new BadRequestException("Token expired");
+    }
+    const userPassword = await db
+        .select({ password: usersTable.password })
+        .from(usersTable)
+        .where(eq(usersTable.id, tokenData[0].userId));
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    if (userPassword[0].password === newPassword) {
+        throw new BadRequestException("New password must be different from the old password");
+    }
+
+    const user = await db
+        .update(usersTable)
+        .set({ password: hashedPassword })
+        .where(eq(usersTable.id, tokenData[0].userId))
+        .returning();
+
+    if (user.length === 0) {
+        throw new BadRequestException("User not found");
+    }
+    await db
+        .delete(tokensTable)
+        .where(eq(tokensTable.token, token));
+}            
 
 async function sendEmail(email: string, token: string) {
     const transporter = mailer.createTransport({

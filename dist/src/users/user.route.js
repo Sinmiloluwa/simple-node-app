@@ -9,4 +9,5 @@ const user_controller_1 = require("./user.controller");
 const router = express_1.default.Router();
 router.put('/user/update-name', auth_guard_1.verifyUser, user_controller_1.updateUsername);
 router.post('/user/forgot-password', user_controller_1.forgotPassword);
+router.post('/user/reset-password', user_controller_1.resetPassword);
 exports.default = router;

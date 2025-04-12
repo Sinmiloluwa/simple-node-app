@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPassword = exports.updateUsername = void 0;
+exports.resetPassword = exports.forgotPassword = exports.updateUsername = void 0;
 const response_1 = require("../utils/response");
 const user_service_1 = require("./user.service");
 const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,3 +36,15 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.forgotPassword = forgotPassword;
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield (0, user_service_1.changePassword)(req.body.token, req.body.password);
+        res.status(200).json((0, response_1.successResponse)("Password reset successfully"));
+    }
+    catch (error) {
+        const status = (error === null || error === void 0 ? void 0 : error.status) || 500;
+        const message = (error === null || error === void 0 ? void 0 : error.message) || "Internal server error";
+        res.status(status).json((0, response_1.errorResponse)(message));
+    }
+});
+exports.resetPassword = resetPassword;
