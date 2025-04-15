@@ -7,4 +7,5 @@ const express_1 = __importDefault(require("express"));
 const spotify_controller_1 = require("./spotify.controller");
 const router = express_1.default.Router();
 router.get('/genres', spotify_controller_1.genres);
+router.get('/new-releases', spotify_controller_1.newReleases);
 exports.default = router;

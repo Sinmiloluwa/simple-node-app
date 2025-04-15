@@ -1,4 +1,5 @@
-import { getSpotifyAccessToken, getGenres } from "./spotify.service";
+import { release } from "os";
+import { getSpotifyAccessToken, getGenres, getNewReleases } from "./spotify.service";
 import { Request, Response } from "express";
 
 let cachedToken: { token: string; expiresAt: number } | null = null as { token: string; expiresAt: number } | null;
@@ -12,7 +13,6 @@ export const getSpotifyToken = async () => {
 
     try {
         const tokenResponse = await getSpotifyAccessToken() as { expires_in: number; access_token: string };
-        console.log("Token Response:", tokenResponse);
 
 
         const expiresIn = tokenResponse.expires_in * 1000;
@@ -44,6 +44,40 @@ export const genres = async (req: Request, res: Response): Promise<any> => {
             name: item.name,
             image: item.icons?.[0]?.url || null,
         }));
+
+        return res.status(200).json({
+            status: true,
+            data: formattedData,
+        });
+    } catch (error) {
+        console.error("Error fetching albums:", error);
+        throw new Error("Failed to fetch albums");
+    }
+}
+
+export const newReleases = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const token = await getSpotifyToken();
+        const response = await getNewReleases(token) as any;
+        const data = response.albums.items;
+        if (!data) {
+            return res.status(404).json({
+                status: false,
+                message: "No new releases found",
+            });
+        }
+
+        const formattedData = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            image: item.images?.[0]?.url || null,
+            releaseDate: item.release_date,
+        }))
+        .filter((item: any) => {
+            const date = new Date(item.releaseDate); 
+            return date > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); 
+        });
+        
 
         return res.status(200).json({
             status: true,

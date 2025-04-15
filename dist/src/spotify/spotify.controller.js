@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.genres = exports.getSpotifyToken = void 0;
+exports.newReleases = exports.genres = exports.getSpotifyToken = void 0;
 const spotify_service_1 = require("./spotify.service");
 let cachedToken = null;
 const getSpotifyToken = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -19,7 +19,6 @@ const getSpotifyToken = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     try {
         const tokenResponse = yield (0, spotify_service_1.getSpotifyAccessToken)();
-        console.log("Token Response:", tokenResponse);
         const expiresIn = tokenResponse.expires_in * 1000;
         cachedToken = {
             token: tokenResponse.access_token,
@@ -62,3 +61,38 @@ const genres = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.genres = genres;
+const newReleases = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = yield (0, exports.getSpotifyToken)();
+        const response = yield (0, spotify_service_1.getNewReleases)(token);
+        const data = response.albums.items;
+        if (!data) {
+            return res.status(404).json({
+                status: false,
+                message: "No new releases found",
+            });
+        }
+        const formattedData = data.map((item) => {
+            var _a, _b;
+            return ({
+                id: item.id,
+                name: item.name,
+                image: ((_b = (_a = item.images) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url) || null,
+                releaseDate: item.release_date,
+            });
+        })
+            .filter((item) => {
+            const date = new Date(item.releaseDate);
+            return date > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        });
+        return res.status(200).json({
+            status: true,
+            data: formattedData,
+        });
+    }
+    catch (error) {
+        console.error("Error fetching albums:", error);
+        throw new Error("Failed to fetch albums");
+    }
+});
+exports.newReleases = newReleases;
