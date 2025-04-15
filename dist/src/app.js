@@ -19,8 +19,8 @@ app.use((0, cors_1.default)({
     credentials: true
 }));
 app.use(auth_route_1.default);
-app.use('/api', user_route_1.default);
-app.use('/api', spotify_route_1.default);
+app.use('/api/user', user_route_1.default);
+app.use('/api/spotify', spotify_route_1.default);
 app.listen(3000, () => {
     console.log(`Server is running on port ${PORT}`);
 });

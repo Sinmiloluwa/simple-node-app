@@ -4,8 +4,8 @@ import { updateUsername, forgotPassword, resetPassword } from "./user.controller
 
 const router = express.Router();
 
-router.put('/user/update-name', verifyUser, updateUsername);
-router.post('/user/forgot-password', forgotPassword);
-router.post('/user/reset-password', resetPassword);
+router.put('/update-name', verifyUser, updateUsername);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 export default router;

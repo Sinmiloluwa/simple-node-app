@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
+const express_1 = __importDefault(require("express"));
 const spotify_controller_1 = require("./spotify.controller");
-const router = (0, express_1.Router)();
-router.get('/spotify/genres', spotify_controller_1.genres);
+const router = express_1.default.Router();
+router.get('/genres', spotify_controller_1.genres);
 exports.default = router;
