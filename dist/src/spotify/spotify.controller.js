@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newReleases = exports.genres = exports.getSpotifyToken = void 0;
+exports.incubatorPlaylist = exports.newReleases = exports.genres = exports.getSpotifyToken = void 0;
 const spotify_service_1 = require("./spotify.service");
 let cachedToken = null;
 const getSpotifyToken = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -96,3 +96,45 @@ const newReleases = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.newReleases = newReleases;
+const incubatorPlaylist = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const token = yield (0, exports.getSpotifyToken)();
+        const response = yield (0, spotify_service_1.incubatorList)(token);
+        const followers = response.followers.total;
+        const link = response.href;
+        const image = ((_b = (_a = response.images) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url) || null;
+        const name = response.name;
+        const tracks = response.tracks.items.map((item) => {
+            var _a, _b;
+            return ({
+                id: item.track.id,
+                name: item.track.name,
+                image: ((_b = (_a = item.track.album.images) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url) || null,
+                artists: item.track.artists.map((artist) => {
+                    var _a, _b;
+                    return ({
+                        id: artist.id,
+                        name: artist.name,
+                        image: ((_b = (_a = artist.images) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url) || null,
+                    });
+                })
+            });
+        });
+        return res.status(200).json({
+            status: true,
+            data: {
+                followers,
+                link,
+                image,
+                name,
+                tracks
+            }
+        });
+    }
+    catch (error) {
+        console.error("Error fetching playlists:", error);
+        throw new Error("Failed to fetch albums");
+    }
+});
+exports.incubatorPlaylist = incubatorPlaylist;

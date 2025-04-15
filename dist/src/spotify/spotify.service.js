@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNewReleases = exports.getGenres = exports.getSpotifyAccessToken = void 0;
+exports.incubatorList = exports.getNewReleases = exports.getGenres = exports.getSpotifyAccessToken = void 0;
 const https_1 = __importDefault(require("https"));
 const querystring_1 = __importDefault(require("querystring"));
 const getSpotifyAccessToken = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -104,3 +104,30 @@ const getNewReleases = (token) => __awaiter(void 0, void 0, void 0, function* ()
     });
 });
 exports.getNewReleases = getNewReleases;
+const incubatorList = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    const options = {
+        hostname: 'api.spotify.com',
+        path: '/v1/playlists/6byYgXoT7VnPMrl8zkxnpT',
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    };
+    return new Promise((resolve, reject) => {
+        const req = https_1.default.request(options, (res) => {
+            let responseData = '';
+            res.on('data', (chunk) => {
+                responseData += chunk;
+            });
+            res.on('end', () => {
+                resolve(JSON.parse(responseData));
+            });
+        });
+        req.on('error', (error) => {
+            reject(error);
+        });
+        req.end();
+    });
+});
+exports.incubatorList = incubatorList;

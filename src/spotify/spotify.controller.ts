@@ -1,5 +1,5 @@
 import { release } from "os";
-import { getSpotifyAccessToken, getGenres, getNewReleases } from "./spotify.service";
+import { getSpotifyAccessToken, getGenres, getNewReleases, incubatorList } from "./spotify.service";
 import { Request, Response } from "express";
 
 let cachedToken: { token: string; expiresAt: number } | null = null as { token: string; expiresAt: number } | null;
@@ -85,6 +85,41 @@ export const newReleases = async (req: Request, res: Response): Promise<any> => 
         });
     } catch (error) {
         console.error("Error fetching albums:", error);
+        throw new Error("Failed to fetch albums");
+    }
+}
+
+export const incubatorPlaylist = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const token = await getSpotifyToken();
+        const response = await incubatorList(token) as any;
+        const followers = response.followers.total;
+        const link = response.href;
+        const image = response.images?.[0]?.url || null;
+        const name = response.name;
+        const tracks = response.tracks.items.map((item: any) => ({
+            id: item.track.id,
+            name: item.track.name,
+            image: item.track.album.images?.[0]?.url || null,
+            artists: item.track.artists.map((artist: any) => ({
+                id: artist.id,
+                name: artist.name,
+                image: artist.images?.[0]?.url || null,
+            }))
+        }));
+
+        return res.status(200).json({
+            status: true,
+            data: {
+                followers,
+                link,
+                image,
+                name, 
+                tracks 
+            }
+        });     
+    } catch (error) {
+        console.error("Error fetching playlists:", error);
         throw new Error("Failed to fetch albums");
     }
 }

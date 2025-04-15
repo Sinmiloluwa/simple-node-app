@@ -8,4 +8,5 @@ const spotify_controller_1 = require("./spotify.controller");
 const router = express_1.default.Router();
 router.get('/genres', spotify_controller_1.genres);
 router.get('/new-releases', spotify_controller_1.newReleases);
+router.get('/incubator-playlist', spotify_controller_1.incubatorPlaylist);
 exports.default = router;

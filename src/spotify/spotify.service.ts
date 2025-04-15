@@ -102,3 +102,34 @@ export const getNewReleases = async (token: string | undefined) => {
         req.end();
     });
 }
+
+export const incubatorList = async (token: string | undefined) => {
+    const options = {
+        hostname: 'api.spotify.com',
+        path: '/v1/playlists/6byYgXoT7VnPMrl8zkxnpT',
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    };
+
+    return new Promise((resolve, reject) => {
+        const req = https.request(options, (res) => {
+            let responseData = '';
+            res.on('data', (chunk) => {
+                responseData += chunk;
+            });
+            res.on('end', () => {
+                resolve(JSON.parse(responseData));
+            });
+        });
+
+        req.on('error', (error) => {
+            reject(error);
+        });
+
+        req.end();
+    });
+
+}
