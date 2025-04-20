@@ -65,4 +65,22 @@ export const login = async (email: string, password: string) => {
   
     return userWithToken;
 }
+
+export const userLogout = async (userId: string,) => {
+    // const user = await db
+    //   .select()
+    //   .from(usersTable)
+    //   .where(eq(usersTable.id, Number(userId)));
+  
+    // if (user.length === 0) {
+    //   throw new NotFoundException("User not found");
+    // }
+
+
+  
+    // // Perform logout logic here (e.g., invalidate session, clear cookies, etc.)
+    // // For example, you might want to remove the user's session from the database.
+  
+    // return { message: "Logout successful" };
+}
   
