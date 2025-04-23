@@ -15,7 +15,7 @@ export const updateUsername = async (req: any, res: Response): Promise<void> => 
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
-        await sendForgotPassword(req.body.email);
+        await sendForgotPassword(req.body.email, req.body.base_url);
         res.status(200).json(successResponse("Password reset link sent to your email"));
     } catch (error) {
         const status = (error as any)?.status || 500;

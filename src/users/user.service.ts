@@ -21,7 +21,7 @@ export const updateName = async (userId: number, newName: string) => {
   return user[0];
 }
 
-export const sendForgotPassword = async (email: string) => {
+export const sendForgotPassword = async (email: string, url: string) => {
   const user = await db
     .select()
     .from(usersTable)
@@ -40,7 +40,7 @@ export const sendForgotPassword = async (email: string) => {
         expiresAt: Math.floor(Date.now() / 1000) + 3600,
     });
 
-    sendEmail(email, token);
+    sendEmail(email, url, token);
 }
 
 export const changePassword = async (token: string, newPassword: string) => {
@@ -81,7 +81,7 @@ export const changePassword = async (token: string, newPassword: string) => {
         .where(eq(tokensTable.token, token));
 }            
 
-async function sendEmail(email: string, token: string) {
+async function sendEmail(email: string, url:string, token: string) {
     const transporter = mailer.createTransport({
         host: process.env.MAIL_HOST,
         port: Number(process.env.MAIL_PORT),
@@ -96,7 +96,7 @@ async function sendEmail(email: string, token: string) {
         from: process.env.MAIL_FROM,
         to: email,
         subject: "Reset Password",
-        text: `Click the link to reset your password: ${process.env.APP_URL}/reset-password/${token}`,
+        text: `Click the link to reset your password: ${url}/reset-password/${token}`,
     };
     
     await transporter.sendMail(mailOptions);
