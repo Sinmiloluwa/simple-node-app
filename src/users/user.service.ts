@@ -96,7 +96,7 @@ async function sendEmail(email: string, url:string, token: string) {
         from: process.env.MAIL_FROM,
         to: email,
         subject: "Reset Password",
-        text: `Click the link to reset your password: ${url}/reset-password/${token}`,
+        text: `Click the link to reset your password: ${url}/reset-password?token=${token}`,
     };
     
     await transporter.sendMail(mailOptions);
