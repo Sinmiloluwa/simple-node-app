@@ -26,7 +26,7 @@ const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.updateUsername = updateUsername;
 const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, user_service_1.sendForgotPassword)(req.body.email);
+        yield (0, user_service_1.sendForgotPassword)(req.body.email, req.body.base_url);
         res.status(200).json((0, response_1.successResponse)("Password reset link sent to your email"));
     }
     catch (error) {

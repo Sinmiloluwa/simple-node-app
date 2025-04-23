@@ -64,7 +64,7 @@ const updateName = (userId, newName) => __awaiter(void 0, void 0, void 0, functi
     return user[0];
 });
 exports.updateName = updateName;
-const sendForgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const sendForgotPassword = (email, url) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield db_1.db
         .select()
         .from(schema_1.usersTable)
@@ -79,7 +79,7 @@ const sendForgotPassword = (email) => __awaiter(void 0, void 0, void 0, function
         createdAt: Math.floor(Date.now() / 1000),
         expiresAt: Math.floor(Date.now() / 1000) + 3600,
     });
-    sendEmail(email, token);
+    sendEmail(email, url, token);
 });
 exports.sendForgotPassword = sendForgotPassword;
 const changePassword = (token, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
@@ -114,7 +114,7 @@ const changePassword = (token, newPassword) => __awaiter(void 0, void 0, void 0,
         .where((0, drizzle_orm_1.eq)(schema_1.tokensTable.token, token));
 });
 exports.changePassword = changePassword;
-function sendEmail(email, token) {
+function sendEmail(email, url, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const transporter = mailer.createTransport({
             host: process.env.MAIL_HOST,
@@ -129,7 +129,7 @@ function sendEmail(email, token) {
             from: process.env.MAIL_FROM,
             to: email,
             subject: "Reset Password",
-            text: `Click the link to reset your password: ${process.env.APP_URL}/reset-password/${token}`,
+            text: `Click the link to reset your password: ${url}/reset-password?token=${token}`,
         };
         yield transporter.sendMail(mailOptions);
     });
