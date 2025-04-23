@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRoutes from './auth/auth.route';
 import userRoutes from './users/user.route';
 import spotifyRoutes from './spotify/spotify.route';
+import todoRoutes from './todo/todo.route';
 
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors({
 app.use(authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/spotify', spotifyRoutes);
+app.use('/api/todo', todoRoutes);
 
 app.listen(3000, () => {
     console.log(`Server is running on port ${PORT}`);

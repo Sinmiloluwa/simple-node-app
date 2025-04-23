@@ -1,4 +1,5 @@
-import { pgTable, integer, varchar } from "drizzle-orm/pg-core";
+import { desc } from "drizzle-orm";
+import { pgTable, serial, integer, varchar, boolean, timestamp, text } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -14,4 +15,14 @@ export const tokensTable = pgTable("tokens", {
     token: varchar({ length: 255 }).notNull(),
     createdAt: integer().notNull(),
     expiresAt: integer().notNull(),
+});
+
+export const todosTable = pgTable("todos", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userId: integer().notNull().references(() => usersTable.id),
+    task: varchar({ length: 255 }).notNull(),
+    description: text().notNull(),
+    completed: boolean().notNull().default(false),
+    remindAt: timestamp().notNull(),
+    createdAt: timestamp().notNull(),
 });

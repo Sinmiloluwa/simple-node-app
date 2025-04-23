@@ -1,4 +1,4 @@
-import { signup, login, userLogout } from "./auth.service";
+import { signup, login } from "./auth.service";
 import { Request, Response } from "express";
 import { sanitizeUser } from "../helpers/SanitizeUser";
 import { createdResponse, errorResponse, successResponse, validationError } from "../utils/response";
@@ -52,13 +52,3 @@ export const signin = async (req: Request<{}, {}, { email: string; password: str
     }
 }
 
-export const logout = async (req: any, res: Response) => {
-    try {
-        await userLogout(req.user.id);
-        return res.status(200).json(successResponse("Logout successful"));
-    } catch (error) {
-        const status = (error as any)?.status || 500;
-        const message = (error as any)?.message || "Internal server error";
-        res.status(status).json(errorResponse(message));
-    }
-}
