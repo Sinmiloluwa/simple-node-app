@@ -1,4 +1,4 @@
-import { createTodo } from "./todo.service";
+import { createTodo, updateTodoStatus, getAllTodos, deleteOneTodo } from "./todo.service";
 import { errorResponse, successResponse, validationError } from "../utils/response";
 import { createTodoSchema } from "./validation/todo.schema";
 
@@ -13,6 +13,42 @@ export const createNewTodo = async (req: any, res: any): Promise<void> => {
         res.status(201).json({ message: "Todo created successfully" });
     } catch (error) {
         console.error("Error creating todo:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const markAsCompleted = async (req: any, res: any): Promise<void> => {
+    try {
+        const todoId = req.params.id;
+        const userId = req.user.id;
+
+        await updateTodoStatus(todoId, userId);
+        res.status(200).json(successResponse("Todo marked as completed"));
+        
+    } catch (error) {
+        console.error("Error marking todo as completed:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const allTodos = async (req: any, res: any): Promise<void> => {   
+    try {
+        const userId = req.user.id
+
+        const todos = await getAllTodos(userId);
+        res.status(200).json(successResponse("Todos fetched successfully", todos));
+    } catch (error) {
+        console.error("Error fetching todos:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const deleteTodo = async (req: any, res: any): Promise<void> => {
+    try {
+        await deleteOneTodo(req.params.id, req.user.id);
+        res.status(200).json(successResponse("Todo deleted successfully"));
+    } catch (error) {
+        console.error("Error deleting todo:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
