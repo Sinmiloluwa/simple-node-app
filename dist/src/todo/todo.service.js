@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOneTodo = exports.getAllTodos = exports.updateTodoStatus = exports.createTodo = void 0;
+exports.oneTodo = exports.deleteOneTodo = exports.getAllTodos = exports.updateTodoStatus = exports.createTodo = void 0;
 const db_1 = require("../db");
 const schema_1 = require("../db/schema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -56,3 +56,12 @@ const deleteOneTodo = (todoId, userId) => __awaiter(void 0, void 0, void 0, func
     yield db_1.db.delete(schema_1.todosTable).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.todosTable.id, todoId), (0, drizzle_orm_1.eq)(schema_1.todosTable.userId, userId)));
 });
 exports.deleteOneTodo = deleteOneTodo;
+const oneTodo = (todoId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const todo = yield db_1.db
+        .select()
+        .from(schema_1.todosTable)
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schema_1.todosTable.id, todoId), (0, drizzle_orm_1.eq)(schema_1.todosTable.userId, userId)));
+    console.log(todo);
+    return todo[0];
+});
+exports.oneTodo = oneTodo;

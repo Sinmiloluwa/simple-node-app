@@ -51,3 +51,13 @@ export const deleteOneTodo = async (todoId: number, userId: number) => {
     
     await db.delete(todosTable).where(and(eq(todosTable.id, todoId), eq(todosTable.userId, userId)));
 }
+
+export const oneTodo = async (todoId: number, userId: number) => {
+    const todo = await db
+        .select()
+        .from(todosTable)
+        .where(and(eq(todosTable.id, todoId), eq(todosTable.userId, userId)));
+        console.log(todo);
+
+    return todo[0];
+}

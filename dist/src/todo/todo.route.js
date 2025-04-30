@@ -11,4 +11,5 @@ router.post('/create', auth_guard_1.verifyUser, todo_controller_1.createNewTodo)
 router.patch('/mark-as-completed/:id', auth_guard_1.verifyUser, todo_controller_1.markAsCompleted);
 router.get('/all', auth_guard_1.verifyUser, todo_controller_1.allTodos);
 router.delete('/delete/:id', auth_guard_1.verifyUser, todo_controller_1.deleteTodo);
+router.get('/:id', auth_guard_1.verifyUser, todo_controller_1.getTodo);
 exports.default = router;

@@ -1,4 +1,4 @@
-import { createTodo, updateTodoStatus, getAllTodos, deleteOneTodo } from "./todo.service";
+import { createTodo, updateTodoStatus, getAllTodos, deleteOneTodo, oneTodo } from "./todo.service";
 import { errorResponse, successResponse, validationError } from "../utils/response";
 import { createTodoSchema } from "./validation/todo.schema";
 
@@ -49,6 +49,23 @@ export const deleteTodo = async (req: any, res: any): Promise<void> => {
         res.status(200).json(successResponse("Todo deleted successfully"));
     } catch (error) {
         console.error("Error deleting todo:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+export const getTodo = async (req: any, res: any): Promise<void> => {
+    try {
+        const todoId = req.params.id;
+        const userId = req.user.id;
+
+        const todo = await oneTodo(todoId, userId);
+        if (!todo) {
+            return res.status(404).json(errorResponse("Todo not found"));
+        }
+
+        res.status(200).json(successResponse("Todo fetched successfully", todo));
+    } catch (error) {
+        console.error("Error fetching todo:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
